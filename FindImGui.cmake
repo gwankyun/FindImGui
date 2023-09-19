@@ -15,6 +15,12 @@ target_sources(${imgui_stdlib} INTERFACE
   ${IMGUI_ROOT}/misc/cpp/imgui_stdlib.h
 )
 
+set(imgui_null imgui_null)
+add_library(${imgui_null} INTERFACE)
+target_link_libraries(${imgui_null} INTERFACE
+  gdi32 shell32 imm32
+)
+
 # win32
 set(imgui_win32 imgui_win32)
 add_library(${imgui_win32} INTERFACE)
@@ -23,14 +29,17 @@ target_sources(${imgui_win32} INTERFACE
 )
 
 # sdl2
+find_package(SDL2 CONFIG)
 set(imgui_sdl2 imgui_sdl2)
-add_library(${imgui_sdl2} INTERFACE)
-target_sources(${imgui_sdl2} INTERFACE
-  ${IMGUI_ROOT}/backends/imgui_impl_sdl2.cpp
-)
-target_link_libraries(${imgui_sdl2} INTERFACE
-  SDL2 SDL2main shell32
-)
+if((TARGET SDL2::SDL2-static) AND (TARGET SDL2::SDL2main))
+  add_library(${imgui_sdl2} INTERFACE)
+  target_sources(${imgui_sdl2} INTERFACE
+    ${IMGUI_ROOT}/backends/imgui_impl_sdl2.cpp
+  )
+  target_link_libraries(${imgui_sdl2} INTERFACE
+    SDL2::SDL2main SDL2::SDL2-static shell32
+  )
+endif()
 
 # sdl3
 set(imgui_sdl3 imgui_sdl3)
@@ -119,7 +128,11 @@ find_package_handle_standard_args(ImGui
 
 if(ImGui_FOUND)
   add_library(ImGui::ImGui ALIAS ${imgui_interface})
+  add_library(ImGui::null ALIAS ${imgui_null})
   add_library(ImGui::win32 ALIAS ${imgui_win32})
+  if(TARGET ${imgui_sdl2})
+    add_library(ImGui::sdl2 ALIAS ${imgui_sdl2})
+  endif()
   add_library(ImGui::opengl3 ALIAS ${imgui_opengl3})
   add_library(ImGui::dx9 ALIAS ${imgui_dx9})
   add_library(ImGui::dx10 ALIAS ${imgui_dx10})

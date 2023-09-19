@@ -22,6 +22,16 @@ include(CMakePrintHelpers)
 
 cmake_print_variables(ImGui_VERSION)
 
+set(example_null example_null)
+add_executable(${example_null})
+target_sources(${example_null} PRIVATE
+  ${IMGUI_ROOT}/examples/${example_null}/main.cpp
+  FindImGui.cmake
+)
+target_link_libraries(${example_null} PRIVATE
+  ImGui::ImGui ImGui::null
+)
+
 set(example_win32_directx9 example_win32_directx9)
 add_executable(${example_win32_directx9})
 target_sources(${example_win32_directx9} PRIVATE
@@ -61,3 +71,15 @@ target_sources(${example_win32_directx12} PRIVATE
 target_link_libraries(${example_win32_directx12} PRIVATE
   ImGui::ImGui ImGui::win32 ImGui::dx12
 )
+
+set(example_sdl2_directx11 example_sdl2_directx11)
+if(TARGET ImGui::sdl2)
+  add_executable(${example_sdl2_directx11})
+  target_sources(${example_sdl2_directx11} PRIVATE
+    ${IMGUI_ROOT}/examples/${example_sdl2_directx11}/main.cpp
+    FindImGui.cmake
+  )
+  target_link_libraries(${example_sdl2_directx11} PRIVATE
+    ImGui::ImGui ImGui::sdl2 ImGui::dx11
+  )
+endif()
