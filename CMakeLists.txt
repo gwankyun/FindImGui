@@ -21,6 +21,8 @@ find_package(ImGui REQUIRED)
 include(CMakePrintHelpers)
 
 cmake_print_variables(ImGui_VERSION)
+cmake_print_variables(ImGui_INCLUDE_DIRS)
+cmake_print_variables(ImGui_LIBRARIES)
 
 set(example_null example_null)
 add_executable(${example_null})
